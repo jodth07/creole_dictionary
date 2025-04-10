@@ -13,60 +13,76 @@ interface ChatResponse {
   definitions: WordDefinition[];
 }
 
+interface Message {
+  sender: 'user' | 'bot';
+  text: string;
+}
+
 function App() {
   const [message, setMessage] = useState('');
-  const [response, setResponse] = useState<ChatResponse | null>(null);
+  const [conversation, setConversation] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!message.trim()) return;
+
+    const userMessage: Message = { sender: 'user', text: message };
+    setConversation((prev) => [...prev, userMessage]);
     setLoading(true);
+
     try {
       const res = await axios.post<ChatResponse>('/api/chat', { message });
-      setResponse(res.data);
+      const botMessage: Message = { sender: 'bot', text: res.data.reply };
+      setConversation((prev) => [...prev, botMessage]);
     } catch (error) {
       console.error(error);
-      setResponse({ reply: 'Erè pandan analiz mesaj la.', definitions: [] });
+      setConversation((prev) => [
+        ...prev,
+        { sender: 'bot', text: '⚠️ Erè pandan analiz mesaj la.' },
+      ]);
+    } finally {
+      setLoading(false);
+      setMessage('');
     }
-    setLoading(false);
   };
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow p-6">
-        <h1 className="text-2xl font-bold mb-4">Diksyonè Kreyòl Chatbot</h1>
-        <form onSubmit={handleSubmit} className="mb-4">
+        <h1 className="text-2xl font-bold mb-4">💬 Diksyonè Kreyòl Chatbot</h1>
+
+        <div className="space-y-3 mb-6 max-h-[60vh] overflow-y-auto">
+          {conversation.map((msg, idx) => (
+            <div
+              key={idx}
+              className={`p-3 rounded-xl w-fit max-w-[90%] ${
+                msg.sender === 'user'
+                  ? 'ml-auto bg-blue-500 text-white'
+                  : 'mr-auto bg-gray-200'
+              }`}
+            >
+              {msg.text}
+            </div>
+          ))}
+          {loading && <div className="text-sm text-gray-500">⏳ Nap chèche definisyon yo...</div>}
+        </div>
+
+        <form onSubmit={handleSubmit} className="flex gap-2">
           <input
             type="text"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            placeholder="Antre yon fraz an kreyòl"
-            className="w-full p-3 border border-gray-300 rounded-xl"
+            placeholder="Antre fraz ou la..."
+            className="flex-1 p-3 border border-gray-300 rounded-xl"
           />
           <button
             type="submit"
-            className="mt-2 bg-blue-500 text-white px-4 py-2 rounded-xl hover:bg-blue-600"
+            className="bg-blue-500 text-white px-4 py-2 rounded-xl hover:bg-blue-600"
           >
             Voye
           </button>
         </form>
-
-        {loading && <p>Nap chèche definisyon yo...</p>}
-
-        {response && (
-          <div className="bg-gray-50 p-4 rounded-xl">
-            <p className="mb-4 whitespace-pre-line">{response.reply}</p>
-            {response.definitions.length > 0 && (
-              <ul className="list-disc pl-6">
-                {response.definitions.map((def, idx) => (
-                  <li key={idx}>
-                    <strong>{def.word}</strong>: {def.definition} <em>({def.source})</em>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        )}
       </div>
     </div>
   );

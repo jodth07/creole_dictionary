@@ -24,7 +24,18 @@ def ping():
     return {"message": "pong"}
 
 def extract_words(text: str):
-    return re.findall(r'\b\w+\b', text.lower())
+    patterns = [
+        r"kisa\s+(\w+)\s+vle\s+di",
+        r"ki\s+siyifikasyon\s+(\w+)",
+        r"sa\s+vle\s+di\s+(\w+)",
+    ]
+    for pattern in patterns:
+        match = re.search(pattern, text.lower())
+        if match:
+            return [match.group(1)]  # return the captured keyword
+
+    # Fallback: tokenize all words if no match
+    return re.findall(r"\b\w+\b", text.lower())
 
 @app.post("/api/chat", response_model=ChatResponse)
 def chat_endpoint(req: ChatRequest):
