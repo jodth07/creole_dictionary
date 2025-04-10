@@ -1,5 +1,5 @@
 // src/App.tsx
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 
 interface WordDefinition {
@@ -22,6 +22,15 @@ function App() {
   const [message, setMessage] = useState('');
   const [conversation, setConversation] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
+  const chatEndRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [conversation, loading]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,6 +75,7 @@ function App() {
             </div>
           ))}
           {loading && <div className="text-sm text-gray-500">⏳ Nap chèche definisyon yo...</div>}
+          <div ref={chatEndRef} />
         </div>
 
         <form onSubmit={handleSubmit} className="flex gap-2">

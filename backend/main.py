@@ -4,6 +4,7 @@ import re
 import uvicorn
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
+from starlette.responses import FileResponse
 from starlette.staticfiles import StaticFiles
 
 from back_translation import get_creole_definition
@@ -18,7 +19,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
 @app.get("/api/ping")
 def ping():
     return {"message": "pong"}
@@ -26,6 +26,8 @@ def ping():
 def extract_words(text: str):
     patterns = [
         r"kisa\s+(\w+)\s+vle\s+di",
+        r"kisa\s+yon\s+(\w+)\s+ye",
+        r"kisa\s+(\w+)\s+ye",
         r"ki\s+siyifikasyon\s+(\w+)",
         r"sa\s+vle\s+di\s+(\w+)",
     ]
@@ -56,7 +58,7 @@ def chat_endpoint(req: ChatRequest):
     if not definitions:
         return {"reply": "Mwen pa jwenn okenn definisyon.", "definitions": []}
 
-    reply = "\n".join([f"Men sa mwen jwenn pou mo *{d['word']}*: {d['definition']}" for d in definitions])
+    reply = "\n".join([f"*{d['word']}*: vle di {d['definition']} sous: {d['source']}" for d in definitions])
     return {"reply": reply, "definitions": definitions}
 
 
@@ -64,6 +66,10 @@ def chat_endpoint(req: ChatRequest):
 frontend_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../frontend/dist'))
 app.mount("/", StaticFiles(directory=frontend_path, html=True), name="frontend")
 
+
+@app.get("/{full_path:path}")
+def serve_vue_app(full_path: str):
+    return FileResponse(os.path.join(frontend_path, "index.html"))
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)

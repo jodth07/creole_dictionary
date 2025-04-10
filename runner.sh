@@ -5,6 +5,10 @@
 #
 
 
+# From project root
+docker build -t creole-chatbot .
+docker run -p 8000:8000 creole-chatbot
+
 
 
 # curl --request GET  \
