@@ -9,6 +9,7 @@ from nltk.corpus import wordnet as wn
 
 
 # Load NLLB model and tokenizer
+# model_name = facebook/nllb-200-3.3B is the full model, but we use a distilled version for efficiency
 model_name = "facebook/nllb-200-distilled-600M"
 tokenizer = AutoTokenizer.from_pretrained(model_name)
 model = AutoModelForSeq2SeqLM.from_pretrained(model_name)

@@ -11,18 +11,11 @@ class ChatRequest(BaseModel):
     message: str
 
 
-class WordDefinition(BaseModel):
+class Definition(BaseModel):
     word: str
     definition: str
     source: str
-
-
-class DefinitionResponse(BaseModel):
-    word: str
-    definition: str
-    source: str
-
 
 class ChatResponse(BaseModel):
     reply: str
-    definitions: List[WordDefinition]
+    definitions: List[Definition]

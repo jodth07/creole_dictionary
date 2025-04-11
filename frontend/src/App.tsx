@@ -74,7 +74,12 @@ function App() {
               {msg.text}
             </div>
           ))}
-          {loading && <div className="text-sm text-gray-500">⏳ Nap chèche definisyon yo...</div>}
+          {loading && (
+            <div className="flex items-center gap-2 text-sm text-gray-500">
+              <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-blue-500"></div>
+              Nap chèche definisyon yo...
+            </div>
+          )}
           <div ref={chatEndRef} />
         </div>
 
