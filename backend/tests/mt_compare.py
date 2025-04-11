@@ -2,7 +2,12 @@ from transformers import pipeline
 
 # Load translation models
 print("Loading models...")
-nllb_translation = pipeline("translation", model="facebook/nllb-200-distilled-600M", src_lang="eng_Latn", tgt_lang="hat_Latn")
+nllb_translation = pipeline(
+    "translation",
+    model="facebook/nllb-200-distilled-600M",
+    src_lang="eng_Latn",
+    tgt_lang="hat_Latn",
+)
 # m2m100_translation = pipeline("translation", model="facebook/m2m100_418M", src_lang="en", tgt_lang="hat")
 # marianmt_translation = pipeline("translation", model="Helsinki-NLP/opus-mt-en-ht")
 
@@ -12,8 +17,9 @@ sample_sentences = [
     "I am learning Haitian Creole to connect with my roots.",
     "Where is the nearest hospital?",
     "A Large Language Model (LLM) is a type of artificial intelligence that can generate human-like text and understand natural language, trained on vast amounts of text data to predict the next word in a sequence.",
-    "Agentic AI refers to AI systems that can act autonomously, adapt in real-time, and solve multi-step problems based on context and objectives, going beyond simple question-answering or content generation."
+    "Agentic AI refers to AI systems that can act autonomously, adapt in real-time, and solve multi-step problems based on context and objectives, going beyond simple question-answering or content generation.",
 ]
+
 
 # Function to translate all sentences using each model
 def translate_all(models, sentences):
@@ -22,10 +28,11 @@ def translate_all(models, sentences):
         print(f"Translating with {model_name}...")
         translated = []
         for sentence in sentences:
-            result = model(sentence)[0]['translation_text']
+            result = model(sentence)[0]["translation_text"]
             translated.append(result)
         translations[model_name] = translated
     return translations
+
 
 # Register models
 models = {
