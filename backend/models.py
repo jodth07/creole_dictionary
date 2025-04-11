@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from pydantic import BaseModel
 
@@ -15,6 +15,8 @@ class Definition(BaseModel):
     word: str
     definition: str
     source: str
+    image_url: Optional[str] = None
+
 
 class ChatResponse(BaseModel):
     reply: str

@@ -35,6 +35,9 @@ processor = ChatProcessor(fetcher)
 
 @app.post("/api/chat", response_model=ChatResponse)
 def chat_endpoint(req: ChatRequest):
+    result = processor.detect_translation_request(req.message)
+    if result:
+        return result
     result = processor.process_message(req.message)
     return result
 
