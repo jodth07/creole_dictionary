@@ -1,7 +1,7 @@
 from transformers import pipeline
 
-# Load translation models
-print("Loading models...")
+# Load translation ml_models
+print("Loading ml_models...")
 nllb_translation = pipeline(
     "translation",
     model="facebook/nllb-200-distilled-600M",
@@ -34,7 +34,7 @@ def translate_all(models, sentences):
     return translations
 
 
-# Register models
+# Register ml_models
 models = {
     "NLLB-200": nllb_translation,
     # "M2M-100": m2m100_translation,

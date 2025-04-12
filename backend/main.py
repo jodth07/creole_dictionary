@@ -1,4 +1,8 @@
 import os
+import sys
+
+project_dir = os.path.abspath(os.path.dirname("../.."))
+sys.path.append(project_dir)
 
 import uvicorn
 from fastapi import FastAPI
@@ -6,12 +10,12 @@ from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import FileResponse
 from starlette.staticfiles import StaticFiles
 
-from image_lookup import ImageFetcher
-from chatter import ChatProcessor
-from definition import DefinitionFetcher
-from loader import DictionaryLoader
-from translation import Translator
-from models import ChatResponse, ChatRequest
+from backend.image_lookup import ImageFetcher
+from backend.chatter import ChatProcessor
+from backend.definition import DefinitionFetcher
+from backend.loader import DictionaryLoader
+from backend.ml_models.translation import Translator
+from backend.models import ChatResponse, ChatRequest
 
 app = FastAPI(title="Diksyonè Kreyòl API")
 app.add_middleware(

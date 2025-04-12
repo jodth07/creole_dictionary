@@ -7,3 +7,4 @@ starlette~=0.46.1
 pydantic~=2.11.2
 nltk~=3.9.1
 torch==2.6.0
+datasets~=3.5.0

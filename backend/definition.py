@@ -2,7 +2,7 @@ from nltk.corpus import wordnet as wn
 from typing import Optional
 
 from loader import DictionaryLoader
-from translation import Translator
+from ml_models.translation import Translator
 
 
 class DefinitionFetcher:
