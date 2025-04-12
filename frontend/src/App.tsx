@@ -100,11 +100,12 @@ function App() {
                   <p className="text-sm">{def.definition}</p>
                   <p className="text-xs text-gray-500">Sous: {def.source}</p>
                   {showImages && def.image_url && (
-                    <img
-                      src={def.image_url}
-                      alt={`Imaj pou ${def.word}`}
-                      className="mt-2 max-w-xs rounded-md border"
-                    />
+                      <img
+                          src={def.image_url}
+                          alt={`Imaj pou ${def.word}`}
+                          onError={(e) => (e.currentTarget.style.display = 'none')}
+                          className="mt-2 max-w-xs rounded-md border"
+                      />
                   )}
                 </div>
               ))}
@@ -112,7 +113,7 @@ function App() {
           ))}
 
           {loading && (
-            <div className="flex items-center gap-2 text-sm text-gray-500">
+              <div className="flex items-center gap-2 text-sm text-gray-500">
               <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-blue-500"></div>
               Nap chèche definisyon yo...
             </div>
