@@ -15,15 +15,20 @@ class ChatProcessor:
     @staticmethod
     def extract_words(text: str) -> List[str]:
         patterns = [
+            r"^e\s+(\w+)",
             r"kisa\s+(\w+)\s+vle\s+di",
             r"kisa\s+yon\s+(\w+)\s+ye",
             r"kisa\s+(\w+)\s+ye",
             r"ki\s+siyifikasyon\s+(\w+)",
             r"sa\s+vle\s+di\s+(\w+)"
+            r"e\s+(\w+)\s+kisa\s+sa\s+vle\s+di\s+",
         ]
         for pattern in patterns:
             match = re.search(pattern, text.lower())
             if match:
+                print("=========================")
+                print(match)
+                print("=========================")
                 return [match.group(1)]
         return re.findall(r"\b\w+\b", text.lower())
 
@@ -82,7 +87,7 @@ class ChatProcessor:
         msg = message.strip().lower()
 
         creole_to_english_patterns = [
-            r"(kisa|ki)\s+'?(\w+)'?\s+(vle di|vle di an angle|vle di an anglè)",
+            r"(kisa|ki)\s+'?(\w+)'?\s+(vle di an angle|vle di an anglè)",
             r"tradui\s+'?(\w+)'?\s+an\s+(angle|anglè)",
             r"what\s+is\s+'?(\w+)'?\s+in\s+english"
         ]

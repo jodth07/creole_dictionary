@@ -48,7 +48,7 @@ function App() {
       const botMessage: Message = {
         sender: 'bot',
         text: res.data.reply,
-        definitions: res.data.definitions
+        definitions: res.data.definitions,
       };
       setConversation((prev) => [...prev, botMessage]);
     } catch (error) {
@@ -81,6 +81,7 @@ function App() {
         <div className="space-y-3 mb-6 max-h-[60vh] overflow-y-auto">
           {conversation.map((msg, idx) => (
             <div key={idx} className="w-fit max-w-[90%]">
+              {/* Chat bubble */}
               <div
                 className={`p-3 rounded-xl ${
                   msg.sender === 'user'
@@ -91,29 +92,29 @@ function App() {
                 {msg.text}
               </div>
 
-              {msg.definitions?.map((def, defIdx) => (
-                <div
-                  key={defIdx}
-                  className="mt-2 ml-4 bg-white border border-gray-300 rounded-lg p-3"
-                >
-                  <p className="font-bold">{def.word}</p>
-                  <p className="text-sm">{def.definition}</p>
-                  <p className="text-xs text-gray-500">Sous: {def.source}</p>
-                  {showImages && def.image_url && (
-                      <img
+              {/* Additional image-only div if images are present */}
+              {showImages && msg.definitions?.some((d) => d.image_url) && (
+                <div className="mt-2 ml-4">
+                  <div className="p-2 border rounded-xl bg-white flex flex-wrap gap-3">
+                    {msg.definitions
+                      ?.filter((def) => def.image_url)
+                      .map((def, i) => (
+                        <img
+                          key={i}
                           src={def.image_url}
                           alt={`Imaj pou ${def.word}`}
+                          className="max-w-[8rem] rounded-md border"
                           onError={(e) => (e.currentTarget.style.display = 'none')}
-                          className="mt-2 max-w-xs rounded-md border"
-                      />
-                  )}
+                        />
+                      ))}
+                  </div>
                 </div>
-              ))}
+              )}
             </div>
           ))}
 
           {loading && (
-              <div className="flex items-center gap-2 text-sm text-gray-500">
+            <div className="flex items-center gap-2 text-sm text-gray-500">
               <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-blue-500"></div>
               Nap chèche definisyon yo...
             </div>
