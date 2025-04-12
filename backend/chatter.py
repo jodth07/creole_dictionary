@@ -4,11 +4,13 @@ from definition import DefinitionFetcher
 import re
 import random
 from typing import List, Optional
+from nltk.corpus import wordnet as wn
 
 
 class ChatProcessor:
-    def __init__(self, definition_fetcher: DefinitionFetcher):
+    def __init__(self, definition_fetcher: DefinitionFetcher, image_fetcher: ImageFetcher):
         self.definition_fetcher = definition_fetcher
+        self.image_fetcher = image_fetcher
 
     @staticmethod
     def extract_words(text: str) -> List[str]:
@@ -26,6 +28,11 @@ class ChatProcessor:
         return re.findall(r"\b\w+\b", text.lower())
 
     @staticmethod
+    def is_noun(word_en: str) -> bool:
+        synsets = wn.synsets(word_en, pos=wn.NOUN)
+        return bool(synsets)
+
+    @staticmethod
     def format_reply(word: str, definition: str, source: str) -> str:
         formats = [
             f"Mo '{word}' vle di '{definition}'. (Sous: {source})",
@@ -35,18 +42,31 @@ class ChatProcessor:
         return random.choice(formats)
 
     def process_message(self, message: str) -> dict:
-
         words = self.extract_words(message)
         seen = set()
         definitions = []
 
         for word in words:
-            if word not in seen:
-                defn, source = self.definition_fetcher.get_definition(word)
-                if defn:
-                    definition = {"word": word, "definition": defn, "source": source}
-                    definitions.append(definition)
-                seen.add(word)
+            if word in seen:
+                continue
+
+            defn, source = self.definition_fetcher.get_definition(word)
+            image_url = None
+
+            if defn:
+                # Only fetch image if it's a noun (using English translation for WordNet check)
+                word_en = self.definition_fetcher.translator.ht_to_en(word)
+                if self.is_noun(word_en):
+                    image_url = self.image_fetcher.get_image(word)
+
+                definitions.append({
+                    "word": word,
+                    "definition": defn,
+                    "source": source,
+                    "image_url": image_url
+                })
+
+            seen.add(word)
 
         if not definitions:
             return {"reply": "Mwen pa jwenn okenn definisyon.", "definitions": []}

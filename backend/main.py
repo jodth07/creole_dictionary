@@ -6,6 +6,7 @@ from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import FileResponse
 from starlette.staticfiles import StaticFiles
 
+from image_lookup import ImageFetcher
 from chatter import ChatProcessor
 from definition import DefinitionFetcher
 from loader import DictionaryLoader
@@ -30,16 +31,16 @@ def ping():
 loader = DictionaryLoader()
 translator = Translator()
 fetcher = DefinitionFetcher(loader, translator)
-processor = ChatProcessor(fetcher)
+image_fetcher = ImageFetcher()
+processor = ChatProcessor(fetcher, image_fetcher)
 
 
 @app.post("/api/chat", response_model=ChatResponse)
 def chat_endpoint(req: ChatRequest):
     result = processor.detect_translation_request(req.message)
-    if result:
-        return result
-    result = processor.process_message(req.message)
-    return result
+    output_result = result or processor.process_message(req.message)
+    print(output_result)
+    return output_result
 
 
 # Mount the frontend
